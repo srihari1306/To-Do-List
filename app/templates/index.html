@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📝 To-Do List</h1>
+
+        <form action="/" method="POST">
+            <input type="text" name="content" placeholder="Enter a new task..." required>
+            <button type="submit">Add Task</button>
+        </form>
+
+        <ul>
+            {% for task in tasks %}
+            <li>
+                <form method="POST" action="{{ url_for('toggle_complete', task_id=task.task_id) }}">
+                    <input type="checkbox" name="completed" onchange="this.form.submit()" {% if task.completed %}checked{% endif %}>
+                    <span class="{% if task.completed %}completed{% endif %}">
+                        {{ task.content }}
+                    </span>
+                </form>
+
+                <div class="actions">
+                        <a href="{{ url_for('update', task_id=task.task_id) }}">✏️ Edit</a>
+                        <a href="{{ url_for('delete', task_id=task.task_id) }}" onclick="return confirm('Delete this task?');">🗑️ Delete</a>
+                </div>
+                
+            </li>
+            {% else %}
+            <li class="empty">No tasks yet! 🎉</li>
+            {% endfor %}
+        </ul>
+
+        {% if session.get('user_id') %}
+        <form action="{{ url_for('logout') }}" method="get" style="display:inline;">
+            <button type="submit">Logout</button>
+        </form>
+
+    </div>
+
+{% endif %}
+</body>
+</html>
